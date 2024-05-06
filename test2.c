@@ -8,13 +8,7 @@
 int main() {
     couleur("46");
     couleur("0");
-    couleur("46");
-    couleur("0");
-    couleur("46");
-    couleur("0");
-    couleur("46");
-    couleur("0");
-
+   
     int tab[10][10]; // Correction: le tableau est de taille 10*10
 
     // Initialisation du générateur de nombres aléatoires
