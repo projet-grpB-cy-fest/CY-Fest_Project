@@ -8,7 +8,7 @@ void constructeur_date(struct tm date){//fonction qui demande à l'utilisateur l
     do{//vérifie que la valeur entrée est correct
         printf("\nJour: ");
         scanf("%d",&date.tm_mday);
-    }while(date.tm_hour<1 || date.tm_hour>31);
+    }while(date.tm_mday<1 || date.tm_mday>31);
 
     do{//vérifie que la valeur entrée est correct
         printf("\nHeure: ");
