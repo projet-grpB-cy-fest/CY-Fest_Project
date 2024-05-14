@@ -31,10 +31,11 @@ void affiche_date(struct tm date){//fonction qui affiche la date entré
     printf("\nle %d à %d:%d\n",date.tm_mday,date.tm_hour,date.tm_min);
 }
 
-void validation_date(struct tm date){//fonction afficher pour l'utilisateur, s'assure si le choix de l'utilisateur lui convient
+struct tm validation_date( ){//fonction afficher pour l'utilisateur, s'assure si le choix de l'utilisateur lui convient
     int date_correct;
+    struct tm date;
     while(date_correct!=1){//continue jusqu'à ce que la date convient à l'utilisateur
-        constructeur_date(date);//fonction pour créer la date
+        date=constructeur_date(date);//fonction pour créer la date
         printf("\nCette date vous correspond elle?: ");
         affiche_date(date);//affiche la date entrée par l'utilisateur
         do{
@@ -42,32 +43,39 @@ void validation_date(struct tm date){//fonction afficher pour l'utilisateur, s'a
             scanf("%d",&date_correct); 
         }while(date_correct<1 || date_correct>2);//recommence si la valeur entrée ne correspond pas aux choix
     }
+    return date;
 
 }
 
 int duree_activite(struct tm fin, struct tm instant_t){//Indique la fin des reservation, retourne 1 si le concert est fini/commencé, dans ce cas aucune réservation n'est possible puisque le concert est fini/commencé. Sinon retourne 0.
 //instant_t pourrait étre la valeur entrez par l'utilisateur pour indiquer l'heure de reservation 
-    if(instant_t.tm_mday>=fin.tm_mday || instant_t.tm_hour>=fin.tm_hour || instant_t.tm_min>=fin.tm_min){
-        printf("fin");
-        return 1;
+    if(instant_t.tm_mday>=fin.tm_mday){
+        if(instant_t.tm_hour>=fin.tm_hour){
+            if(instant_t.tm_min>=fin.tm_min){
+                printf("fin");
+                return 1;
+            }
+        }
     }
-    else{
-        printf("libre");
-        return 0;
-    }
+    printf("libre");
+    return 0;
 
 }
 
 int main( ){
-    struct tm *date_debut;
-    struct tm *date_fin;
-    struct tm *instant;//structure de date
+    struct tm date_debut;
+    struct tm date_fin;
+    struct tm instant;//structure de date
 
     //l'utilisateur rentre le début et la fin de l'activité
-    
+    printf("\ndebut:\n");
+    date_debut=validation_date();
+    printf("\nfin:\n");
+    date_fin=validation_date();
 
     //demande à l'utilisateur la date de réservation (inserer une fonction pour comparer la date avec celle de l'activité choisie)
-    validation_date(&instant);
+    printf("\ninstant\n");
+    instant=validation_date();
 
     //vérifie si la réservation est possible
     duree_activite(date_fin,instant);
