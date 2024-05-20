@@ -43,6 +43,7 @@ void afficherSalle(Salle salle, int fosse) {
             } else {
                 couleur("31"); // Rouge pour les sièges réservés
             }
+            //Si il y a une fosse on mets des espaces
             if(fosse==0){
                 if((i==0)||(i==1)){
                     printf("[] ");
@@ -103,6 +104,7 @@ int main() {
     // Le choix de la salle est valide
     Salle salleChoisie = salles[choix - 1];
 
+    //choix fosse
     int fosse;
     printf("\n(fosse: 0-OUI 1-NON)\n");
     scanf("%d",&fosse);
