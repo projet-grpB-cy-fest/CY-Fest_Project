@@ -31,7 +31,7 @@ void initialiserSalle(Salle *salle) {
 }
 
 // Fonction pour afficher le plan d'une salle
-void afficherSalle(Salle salle) {
+void afficherSalle(Salle salle, int fosse) {
     printf("Plan de la salle %s :\n", salle.nom);
     printf("     01 02 03 04 05 06 07 08\n");
     printf("    +-----------------------+\n");
@@ -43,12 +43,22 @@ void afficherSalle(Salle salle) {
             } else {
                 couleur("31"); // Rouge pour les sièges réservés
             }
-            printf("%02d ", i * 8 + j + 1);
+            if(fosse==0){
+                if((i==0)||(i==1)){
+                    printf("[] ");
+                }
+                else{
+                    printf("%02d ", i * 8 + j + 1);
+                }
+            }
+            else{
+                printf("%02d ", i * 8 + j + 1);
+            }
         }
         couleur("0"); // Réinitialisation de la couleur
         printf("|\n");
     }
-    printf("    +-----------------------+\n");
+    printf("+----------------------------+\n");
     couleur("0"); // Réinitialisation de la couleur
 }
 
@@ -93,11 +103,15 @@ int main() {
     // Le choix de la salle est valide
     Salle salleChoisie = salles[choix - 1];
 
+    int fosse;
+    printf("\n(fosse: 0-OUI 1-NON)\n");
+    scanf("%d",&fosse);
+
     // Affichage de la salle choisie
     printf("\nVous avez choisi d'aller a %s ou %s joue.\n\n", salleChoisie.nom, salleChoisie.groupe);
 
     // Affichage du plan de la salle
-    afficherSalle(salleChoisie);
+    afficherSalle(salleChoisie,fosse);
 
     // Demande à l'utilisateur de choisir un siège
     int numeroSiege;
@@ -127,7 +141,7 @@ int main() {
     salleChoisie.sieges[ligne][colonne].statut = 'X';
 
     // Affichage du plan de la salle après réservation du siège
-    afficherSalle(salleChoisie);
+    afficherSalle(salleChoisie,fosse);
 
     // Calcul du prix du siège en fonction de son emplacement
     int prix;
