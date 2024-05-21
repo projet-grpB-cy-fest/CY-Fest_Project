@@ -63,13 +63,10 @@ int duree_activite(struct tm fin, struct tm instant_t){//Indique la fin des rese
 }
 
 int main( ){
-    struct tm date_debut;
     struct tm date_fin;
     struct tm instant;//structure de date
 
-    //l'utilisateur rentre le début et la fin de l'activité
-    printf("\ndebut:\n");
-    date_debut=validation_date();
+    //l'utilisateur rentre l'heure de fin de l'activité
     printf("\nfin:\n");
     date_fin=validation_date();
 
