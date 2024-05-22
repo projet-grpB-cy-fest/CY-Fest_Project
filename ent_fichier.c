@@ -158,3 +158,8 @@ int main() {
 
     return 0;
 }
+
+//https://chatgpt.com/
+//https://zestedesavoir.com/tutoriels/755/le-langage-c-1/
+https://openclassrooms.com/
+
