@@ -2,36 +2,42 @@
 #include <time.h>
 #include <unistd.h>
 
-struct tm constructeur_date(struct tm date){//fonction qui demande à l'utilisateur le jour, l'heure et la minute du début ou de la fin de l'activité
+//fonction qui demande à l'utilisateur le jour, l'heure et la minute du début ou de la fin de l'activité
 //sturct tm date: structure contenant les informations nécessaire pour déterminer le temps
-    
-    do{//vérifie que la valeur entrée est correct
+struct tm constructeur_date(struct tm date){
+
+    //vérifier que la valeur entrée est correct
+    do{
         printf("\nJour: ");
         scanf("%d",&date.tm_mday);
     }while(date.tm_mday<1 || date.tm_mday>31);
 
-    do{//vérifie que la valeur entrée est correct
+    //vérifier que la valeur entrée est correct
+    do{
         printf("\nHeure: ");
         scanf("%d",&date.tm_hour);
     }while(date.tm_hour<0 || date.tm_hour>23);
 
-    do{//vérifie que la valeur entrée est correct
+    //vérifier que la valeur entrée est correct
+    do{
         printf("\nMinute: ");
         scanf("%d",&date.tm_min);
     }while(date.tm_min<0 || date.tm_min>59);
 
-    //initialise les autres valeurs à 0
+    //initialiser les autres valeurs à 0
     date.tm_year=0;
     date.tm_mon=0;
     date.tm_sec=0;
     return date;
 }
 
-void affiche_date(struct tm date){//fonction qui affiche la date entré
+//fonction qui affiche la date entrée
+void affiche_date(struct tm date){
     printf("\nle %d à %d:%d\n",date.tm_mday,date.tm_hour,date.tm_min);
 }
 
-struct tm validation_date( ){//fonction afficher pour l'utilisateur, s'assure si le choix de l'utilisateur lui convient
+//fonction afficher pour l'utilisateur, elle s'assure si le choix de l'utilisateur lui convient
+struct tm validation_date( ){
     int date_correct;
     struct tm date;
     while(date_correct!=1){//continue jusqu'à ce que la date convient à l'utilisateur
@@ -47,8 +53,9 @@ struct tm validation_date( ){//fonction afficher pour l'utilisateur, s'assure si
 
 }
 
-int duree_activite(struct tm fin, struct tm instant_t){//Indique la fin des reservation, retourne 1 si le concert est fini/commencé, dans ce cas aucune réservation n'est possible puisque le concert est fini/commencé. Sinon retourne 0.
-//instant_t pourrait étre la valeur entrez par l'utilisateur pour indiquer l'heure de reservation 
+//Indique la fin des reservations, retourne 1 si le concert est fini/commencé, dans ce cas aucune réservation n'est possible puisque le concert est fini/commencé. Sinon retourne 0.
+//instant_t pourrait étre la valeur entreé par l'utilisateur pour indiquer l'heure de reservation 
+int duree_activite(struct tm fin, struct tm instant_t){
     if(instant_t.tm_mday>=fin.tm_mday){
         if(instant_t.tm_hour>=fin.tm_hour){
             if(instant_t.tm_min>=fin.tm_min){
@@ -64,9 +71,9 @@ int duree_activite(struct tm fin, struct tm instant_t){//Indique la fin des rese
 
 int main( ){
     struct tm date_fin;
-    struct tm instant;//structure de date
+    struct tm instant; //structure de date
 
-    //l'utilisateur rentre l'heure de fin de l'activité
+    //l'utilisateur entre l'heure de fin de l'activité
     printf("\nfin:\n");
     date_fin=validation_date();
 
@@ -74,10 +81,11 @@ int main( ){
     printf("\ninstant\n");
     instant=validation_date();
 
-    //vérifie si la réservation est possible
+    //vérifier si la réservation est possible
     duree_activite(date_fin,instant);
 
     return 0;
 } 
 //source: http://sdz.tdct.org/sdz/ime-h-et-ses-fonctions.html
 //        https://koor.fr/C/ctime/ctime.wp
+// CHATGPT 
