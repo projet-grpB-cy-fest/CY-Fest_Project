@@ -46,18 +46,22 @@ void afficherSalle(Salle salle, int fosse) {
     for (int i = 0; i < 8; i++) {
         printf("%02d | ", i + 1);
         for (int j = 0; j < 8; j++) {
-            if (salle.sieges[i][j].statut == 'O') {
-                if (salle.sieges[i][j].categorie == 'A') {
-                    couleur("0;34"); // Bleu pour les sièges de catégorie A
-                } else if (salle.sieges[i][j].categorie == 'B') {
-                    couleur("0;33"); // Jaune pour les sièges de catégorie B
-                } else if (salle.sieges[i][j].categorie == 'C') {
-                    couleur("0;35"); // Magenta pour les sièges de catégorie C
-                }
-                printf("%02d ", i * 8 + j + 1);
+            if (fosse == 0 && i < 3) {
+                printf("   "); // Affiche un espace vide pour la fosse
             } else {
-                couleur("0;31"); // Rouge pour les sièges réservés
-                printf("X  "); // Affichage d'une croix rouge pour un siège réservé
+                if (salle.sieges[i][j].statut == 'O') {
+                    if (salle.sieges[i][j].categorie == 'A') {
+                        couleur("0;34"); // Bleu pour les sièges de catégorie A
+                    } else if (salle.sieges[i][j].categorie == 'B') {
+                        couleur("0;33"); // Jaune pour les sièges de catégorie B
+                    } else if (salle.sieges[i][j].categorie == 'C') {
+                        couleur("0;35"); // Magenta pour les sièges de catégorie C
+                    }
+                    printf("%02d ", i * 8 + j + 1);
+                } else {
+                    couleur("0;31"); // Rouge pour les sièges réservés
+                    printf("X  "); // Affichage d'une croix rouge pour un siège réservé
+                }
             }
             couleur("0"); // Réinitialisation de la couleur
         }
@@ -81,7 +85,6 @@ void afficherMessageBienvenue() {
     printf("**************************************************\n");
     couleur("0"); // Réinitialisation de la couleur
 }
-
 
 int main() {
     // Initialisation du générateur de nombres aléatoires
@@ -135,40 +138,48 @@ int main() {
     // Affichage du plan de la salle
     afficherSalle(salleChoisie, fosse);
 
-    // Demande à l'utilisateur de choisir un siège
-    int numeroSiege;
-    printf("Quel siège voulez-vous ? (01-64) : ");
-    while (scanf("%d", &numeroSiege) != 1 || numeroSiege < 1 || numeroSiege > 64) {
-        printf("Siège invalide. Veuillez choisir un siège valide : ");
-        while (getchar() != '\n'); // Vider le tampon d'entrée
-    }
-
-    // Conversion du numéro de siège en indices de ligne et de colonne
-    int ligne = (numeroSiege - 1) / 8;
-    int colonne = (numeroSiege - 1) % 8;
-
-    // Le choix de siège est valide
-    Siege siegeChoisi = salleChoisie.sieges[ligne][colonne];
-    // Vérification de la disponibilité du siège
-    if (siegeChoisi.statut == 'X') {
-        printf("Ce siège est déjà réservé.\n");
-        return 1;
-    }
-
-    // Réservation du siège
-    salleChoisie.sieges[ligne][colonne].statut = 'X';
-
-    // Affichage du plan de la salle après réservation du siège
-    afficherSalle(salleChoisie, fosse);
-
-    // Calcul du prix du siège en fonction de son emplacement
-    int prix;
-    if (ligne == 0 || ligne == 7) {
-        prix = salleChoisie.prixSieges[0]; // Siège avant ou arrière
+    if (fosse == 0) {
+        // Calcul du prix pour la fosse
+        int prixFosse = salleChoisie.prixSieges[0] * 2;
+        printf("Vous avez choisi la fosse. Le prix du billet pour la fosse est de %d euros.\n", prixFosse);
     } else {
-        prix = salleChoisie.prixSieges[1]; // Siège du milieu
+        // Demande à l'utilisateur de choisir un siège
+        int numeroSiege;
+        printf("Quel siège voulez-vous ? (01-64) : ");
+        while (scanf("%d", &numeroSiege) != 1 || numeroSiege < 1 || numeroSiege > 64) {
+            printf("Siège invalide. Veuillez choisir un siège valide : ");
+            while (getchar() != '\n'); // Vider le tampon d'entrée
+        }
+
+        // Conversion du numéro de siège en indices de ligne et de colonne
+        int ligne = (numeroSiege - 1) / 8;
+        int colonne = (numeroSiege - 1) % 8;
+
+        // Le choix de siège est valide
+        Siege siegeChoisi = salleChoisie.sieges[ligne][colonne];
+        // Vérification de la disponibilité du siège
+        if (siegeChoisi.statut == 'X') {
+            printf("Ce siège est déjà réservé.\n");
+            return 1;
+        }
+
+        // Réservation du siège
+        salleChoisie.sieges[ligne][colonne].statut = 'X';
+
+        // Affichage du plan de la salle après réservation du siège
+        afficherSalle(salleChoisie, fosse);
+
+        // Calcul du prix du siège en fonction de son emplacement
+        int prix;
+        if (ligne < 3) {
+            prix = salleChoisie.prixSieges[0]; // Siège avant
+        } else if (ligne < 6) {
+            prix = salleChoisie.prixSieges[1]; // Siège du milieu
+        } else {
+            prix = salleChoisie.prixSieges[2]; // Siège arrière
+        }
+        printf("Le prix du billet pour ce siège est de %d euros.\n", prix);
     }
-    printf("Le prix du billet pour ce siège est de %d euros.\n", prix);
 
     printf("Merci pour votre achat ! Profitez du concert !\n");
 
