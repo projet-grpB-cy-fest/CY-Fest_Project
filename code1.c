@@ -83,7 +83,7 @@ void afficherMessageBienvenue() {
     printf("*  _       __     __                             *\n");
     printf("* | |     / /__  / /________  ____ ___  ___      *\n");
     printf("* | | /| / / _ \\/ / ___/ __ \\/ __ `__ \\/ _ \\     *\n");
-    printf("* | |/ |/ /  __/ / /__/ /_/ / / / / /  __/     *\n");
+    printf("* | |/ |/ /  __/ / /__/ /_/ / / / / /  __/       *\n");
     printf("* |__/|__/\\___/_/\\___/\\____/_/ /_/ /_/\\___/      *\n");
     printf("*                                                *\n");
     printf("*      Bienvenue dans notre grand festival !     *\n");
@@ -106,10 +106,21 @@ int better_scan(char *message, char *result, int size) {
 // Fonction pour scanner un entier
 int better_scan_int(char *message) {
     int value;
-    printf("%s", message);
-    scanf("%d", &value);
-    while (getchar() != '\n')
-        ; // Vider le buffer d'entrée
+    char buffer[64];
+    while (1) {
+        printf("%s", message);
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+            // Gestion d'une erreur de saisie
+            printf("Erreur de saisie. Veuillez saisir un entier.\n");
+            continue;
+        }
+        if (sscanf(buffer, "%d", &value) != 1) {
+            // Gestion d'une saisie incorrecte (non-entier)
+            printf("Erreur de saisie. Veuillez saisir un entier.\n");
+            continue;
+        }
+        break;
+    }
     return value;
 }
 
@@ -237,16 +248,15 @@ void gestionFestivalier(Salle salles[]) {
 
 int main() {
     afficherMessageBienvenue();
-
     // Demande à l'utilisateur de choisir entre le mode Manager et le mode Festivalier
     int mode;
     printf("Choisissez un mode : (1-Manager, 2-Festivalier) : ");
     while (scanf("%d", &mode) != 1 || (mode != 1 && mode != 2)) {
         printf("Choix invalide. Veuillez saisir 1 pour Manager ou 2 pour Festivalier : ");
-        while (getchar() != '\n')
-            ; // Vider le tampon d'entrée
+        while (getchar() != '\n'){}
+             // Vider le tampon d'entrée
     }
-
+    getchar();
     // Mode Manager
     if (mode == 1) {
         Salle salles[4];
