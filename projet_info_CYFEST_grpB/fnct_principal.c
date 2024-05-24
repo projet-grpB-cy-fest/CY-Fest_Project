@@ -26,7 +26,7 @@ typedef struct {
     int prixSieges[3];  // Prix pour les sièges avant, milieu et arrière
     Siege sieges[NB_LIGNES][NB_COLONNES]; // Tableau de sièges pour la salle
     int fosse;
-    struct tm heure_fin;
+    int creneaux;
 } Salle;
 
 // Fonction pour initialiser une salle
@@ -92,11 +92,13 @@ int better_scan(char *message, char *result, int size) {
 
 // Fonction pour scanner un entier
 int better_scan_int(char *message) {
-    int value;
-    printf("%s", message);
-    scanf("%d", &value);
-    while (getchar() != '\n')
-        ; // Vider le buffer d'entrée
+    int ret_var=0;
+    int value=1;
+    while(ret_var!=1){
+        printf(message);
+        ret_var=scanf("%d",&value);
+        while(getchar()!='\n'){}
+    }
     return value;
 }
 
@@ -109,21 +111,23 @@ double calculerRatio(int nb_sieges_reserves, int nb_sieges_total) {
 Salle constructeur_Salle() {
     Salle salle;
     better_scan("Saisir le nom de la salle : ", salle.nom_salle, TAILLE);
+    getchar();
     better_scan("Saisir le nom du groupe de musique : ", salle.groupe, TAILLE);
+    getchar();
     salle.nb_siege = NB_LIGNES * NB_COLONNES; // Fixé à 64 sièges pour toutes les salles
     salle.nb_siege_reserves = 0; // Initialisation du nombre de sièges réservés
     salle.prixSieges[0] = better_scan_int("Saisir le prix des sièges avant : ");
     salle.prixSieges[1] = better_scan_int("Saisir le prix des sièges milieu : ");
     salle.prixSieges[2] = better_scan_int("Saisir le prix des sièges arrière : ");
     printf("\nFosse ? (1-OUI 2-NON) : ");
-    while (scanf("%d", salle.fosse) != 1 || (salle.fosse != 1 && salle.fosse != 2)) {
+    while (scanf("%d", salle.fosse) != 1 || (salle.fosse != 1 || salle.fosse != 2)) {
         printf("Choix invalide. Veuillez saisir 1 ou 2 : ");
         while (getchar() != '\n')
             ; // Vider le tampon d'entrée
     }
     printf("\nFin du concert:\n");
-    salle.heure_fin=validation_date();
-    sauvegarde_donnee_salle(salle.nom_salle, salle.groupe, salle.nb_siege, salle.prixSieges[0], salle.prixSieges[1], salle.prixSieges[2], salle.fosse, salle.heure_fin);
+    salle.creneaux=demander_creneaux();
+    sauvegarde_donnee_salle(salle.nom_salle, salle.groupe, salle.nb_siege, salle.prixSieges[0], salle.prixSieges[1], salle.prixSieges[2], salle.fosse, salle.creneaux);
     initialiserSalle(&salle);
     return salle;
 }
@@ -134,14 +138,14 @@ Salle configuration_Salle(Salle salle) {
     salle.prixSieges[1] = better_scan_int("Saisir le prix des sièges milieu : ");
     salle.prixSieges[2] = better_scan_int("Saisir le prix des sièges arrière : ");
     printf("\nFosse ? (1-OUI 2-NON) : ");
-    while (scanf("%d", salle.fosse) != 1 || (salle.fosse != 1 && salle.fosse != 2)) {
+    while (scanf("%d", salle.fosse) != 1 || (salle.fosse != 1 || salle.fosse != 2)) {
         printf("Choix invalide. Veuillez saisir 1 ou 2 : ");
         while (getchar() != '\n')
             ; // Vider le tampon d'entrée
     }
     printf("\nFin du concert:\n");
-    salle.heure_fin=validation_date();
-    sauvegarde_donnee_salle_modif(salle.nom_salle, salle.groupe, salle.nb_siege, salle.prixSieges[0], salle.prixSieges[1], salle.prixSieges[2], salle.fosse, salle.heure_fin);
+    salle.creneaux=demander_creneaux();
+    sauvegarde_donnee_salle_modif(salle.nom_salle, salle.groupe, salle.nb_siege, salle.prixSieges[0], salle.prixSieges[1], salle.prixSieges[2], salle.fosse, salle.creneaux);
     initialiserSalle(&salle);
     return salle;
 }
@@ -151,11 +155,11 @@ void gestionFestivalier(Salle salles[]) {
     int j=0;
     //Demande l'heure de reservation 
     printf("\nA quel heure voulez vous assistez aux concerts? :\n");
-    struct tm heure_reservation=validation_date();
+    int reservation_creneaux=demander_creneaux();
     // Affichage des salles disponibles, des groupes qui y jouent et des prix des billets
     printf("Salles disponibles :\n");
     for(int i=0; i<100; i++){
-        if(duree_activite(salles[i].heure_fin, heure_reservation)==0){
+        if(reservation_creneaux==salles[i].creneaux){
             j++;
             if(salles[i].fosse==1){
                 printf("%d. %s\n   Groupe : %s\n   Fosse : OUI\n   Prix du billet (avant/milieu/arrière) : %d/%d/%d euros\n\n",
@@ -164,7 +168,7 @@ void gestionFestivalier(Salle salles[]) {
                salles[i].prixSieges[2]);
             }
             else{
-                printf("%d. %s\n   Groupe : %s\n   Fosse : OUI\n   Prix du billet (avant/milieu/arrière) : %d/%d/%d euros\n\n",
+                printf("%d. %s\n   Groupe : %s\n   Fosse : NON\n   Prix du billet (avant/milieu/arrière) : %d/%d/%d euros\n\n",
                j, salles[i].nom_salle, salles[i].groupe,
                salles[i].prixSieges[0], salles[i].prixSieges[1],
                salles[i].prixSieges[2]);
@@ -249,8 +253,8 @@ void gestionFestivalier(Salle salles[]) {
         // Affichage du prix total à payer
         printf("Le prix total à payer est de %d euros.\n", prix_a_payer);
     }
-    sauvegarde_donnee_reservation(salleChoisie->nom_salle, salleChoisie->groupe, numeroSiege, prix_a_payer, salleChoisie->fosse, heure_reservation);
+    sauvegarde_donnee_reservation(salleChoisie->nom_salle, salleChoisie->groupe, numeroSiege, prix_a_payer, salleChoisie->fosse, salleChoisie->creneaux);
     
-    // Remerciement
+    // Remerciement 
     printf("Merci pour votre réservation !\n");
 }

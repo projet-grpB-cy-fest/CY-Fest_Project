@@ -5,7 +5,7 @@
 #include <errno.h>
 
 //fonction sauvegarde données de créations de salles
-void sauvegarde_donnee_salle(char* nom_salle, char* nom_groupe, int n_siege, int prix_avant, int prix_millieu, int prix_arriere, int fosse, struct tm heure_fin){
+void sauvegarde_donnee_salle(char* nom_salle, char* nom_groupe, int n_siege, int prix_avant, int prix_millieu, int prix_arriere, int fosse, int creneaux){
 	//ouverture fichier.txt
 	FILE* f=NULL;
 	f=fopen("sauvgarde_salle.txt","a+");
@@ -21,13 +21,13 @@ void sauvegarde_donnee_salle(char* nom_salle, char* nom_groupe, int n_siege, int
 	fprintf(f,"%s ",nom_groupe);
 	fprintf(f,"%d ",n_siege);
 	fprintf(f,"%d %d %d",prix_avant, prix_millieu, prix_arriere);
-	fprintf(f,"%d %d:%d\n",heure_fin.tm_mday,heure_fin.tm_hour,heure_fin.tm_min);
+	fprintf(f,"%d \n",creneaux);
 	
 	fclose(f); 
 }
 
 //fonction sauvegarde données de modification de salles
-void sauvegarde_donnee_salle_modif(char* nom_salle, char* nom_groupe, int n_siege, int prix_avant, int prix_millieu, int prix_arriere, int fosse, struct tm heure_fin){
+void sauvegarde_donnee_salle_modif(char* nom_salle, char* nom_groupe, int n_siege, int prix_avant, int prix_millieu, int prix_arriere, int fosse, int creneaux){
 	FILE* f=NULL;
 	f=fopen("sauvgarde_salle.txt","a+");
 	if (f==NULL){
@@ -41,13 +41,13 @@ void sauvegarde_donnee_salle_modif(char* nom_salle, char* nom_groupe, int n_sieg
 	fprintf(f,"%s ",nom_groupe);
 	fprintf(f,"%d ",n_siege);
 	fprintf(f,"%d %d %d",prix_avant, prix_millieu, prix_arriere);
-	fprintf(f,"%d %d:%d\n",heure_fin.tm_mday,heure_fin.tm_hour,heure_fin.tm_min);
+	fprintf(f,"%d \n",creneaux);
 	
 	fclose(f);
 }
 
 //fonction sauvegarde données de reservation siege
-void sauvegarde_donnee_reservation(char* nom_salle, char* nom_groupe, int n_siege, int prix, int fosse, struct tm heure_reservation){
+void sauvegarde_donnee_reservation(char* nom_salle, char* nom_groupe, int n_siege, int prix, int fosse, int creneaux){
 	//ouverture fichier.txt
 	FILE* f=NULL;
 	f=fopen("sauvgarde_reservation.txt","a+");
@@ -63,8 +63,8 @@ void sauvegarde_donnee_reservation(char* nom_salle, char* nom_groupe, int n_sieg
 	fprintf(f,"%s ",nom_groupe);
 	fprintf(f,"%d ",n_siege);
 	fprintf(f,"%f ",prix);
-	fprintf(f,"%d %d:%d\n",heure_reservation.tm_mday,heure_reservation.tm_hour,heure_reservation.tm_min);
+	fprintf(f,"%d \n",creneaux);
 	
 	fclose(f); 
-}
+} 
 

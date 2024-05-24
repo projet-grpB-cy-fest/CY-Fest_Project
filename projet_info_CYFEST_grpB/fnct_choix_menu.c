@@ -3,19 +3,12 @@
 #include <unistd.h> 
 #include "entete_fnct_principal.h"
 
-void choixmenu(){
-    int mode,choix_manager,choix_festivalier,choix_salles,i=0,j=0;
-    Salle *salles_concert=malloc(100*sizeof(Salle));
- 
-//entrez le mode:
-    printf("\n1-MANAGER \n2-FESTIVALIER \n3-QUITTER");
+void choixmenu();
+void choixmenu_mode(int mode);
 
-//boucle vérifie si la valeur entrez est correct
-    do{
-        printf("\n\nEntrez votre choix: ");
-        scanf("%d",&mode);
-    }while(mode<1||mode>3);
-
+void choixmenu_mode(int mode){
+    int choix_manager,choix_festivalier,choix_salles,i=0,j=0;
+        Salle *salles_concert=malloc(100*sizeof(Salle));
 //mode manager:
     if(mode==1){
 
@@ -41,6 +34,7 @@ void choixmenu(){
                 //appelle fonction correspondante
                 j++;
                 *(salles_concert+(j-1))=constructeur_Salle();
+                choixmenu_mode(1);
             break;
 
             case 2:
@@ -54,7 +48,8 @@ void choixmenu(){
                     printf("\nQuelle salle voullez-vous modifier? : ");
                     scanf("%d",choix_salles); 
                 }while(choix_salles<=0||choix_salles>j);
-                Salle salle_modifier=configuration_Salle(salles_concert[choix_salles-1]);            
+                Salle salle_modifier=configuration_Salle(salles_concert[choix_salles-1]);  
+                choixmenu_mode(1);          
             break;
 
             case 3:
@@ -69,16 +64,19 @@ void choixmenu(){
                     scanf("%d",choix_salles); 
                 }while(choix_salles<=0||choix_salles>j);
                 printf("\nRatio salle %s: %ld",salles_concert[choix_salles-1].nom_salle,calculerRatio(salles_concert[choix_salles-1].nb_siege_reserves, salles_concert[choix_salles-1].nb_siege));
+                choixmenu_mode(1);
             break;
 
             default:
                 //message d'erreur ou cas ou
                 printf("\nerreur saisie");
+                choixmenu_mode(1);
             break;
         }
+        free(salles_concert);
     }
 
-//mode festivalier:
+    //mode festivalier:
     if(mode==2){
        //menu
         printf("\n1-Réservation \n2-Retour au menu principal ");
@@ -91,6 +89,7 @@ void choixmenu(){
 
         if(choix_festivalier==1){
             gestionFestivalier(salles_concert);
+            choixmenu_mode(2);
         }
         else if(choix_festivalier==2){
         //retour menu principal
@@ -120,5 +119,21 @@ void choixmenu(){
         printf("\n   Aurevoir    \n");
         return ;
     }
+
+}
+
+void choixmenu(){
+    int mode;
+ 
+//entrez le mode:
+    printf("\n1-MANAGER \n2-FESTIVALIER \n3-QUITTER");
+
+//boucle vérifie si la valeur entrez est correct
+    do{
+        printf("\n\nEntrez votre choix: ");
+        scanf("%d",&mode);
+    }while(mode<1||mode>3);
+
+    choixmenu_mode(mode);
 
 }

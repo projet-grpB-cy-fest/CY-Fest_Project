@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 #include <errno.h>
 #include "entete_choix_menu.h"
 
@@ -27,7 +28,6 @@ void afficherMessageBienvenue() {
 int main(){
     afficherMessageBienvenue();
     choixmenu();
-
-    free(salles_concert);
+ 
     return 0;
 }

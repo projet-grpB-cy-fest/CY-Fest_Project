@@ -1,64 +1,33 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
-#include <unistd.h>
 
-struct tm constructeur_date(struct tm date){//fonction qui demande à l'utilisateur le jour, l'heure et la minute de la fin du concert
-//sturct tm date: structure contenant les informations nécessaire pour déterminer le temps
-    
-    do{//vérifie que la valeur entrée est correct
-        printf("\nJour: ");
-        scanf("%d",&date.tm_mday);
-    }while(date.tm_mday<1 || date.tm_mday>31);
-
-    do{//vérifie que la valeur entrée est correct
-        printf("\nHeure: ");
-        scanf("%d",&date.tm_hour);
-    }while(date.tm_hour<0 || date.tm_hour>23);
-
-    do{//vérifie que la valeur entrée est correct
-        printf("\nMinute: ");
-        scanf("%d",&date.tm_min);
-    }while(date.tm_min<0 || date.tm_min>59);
-
-    //initialise les autres valeurs à 0
-    date.tm_year=0;
-    date.tm_mon=0;
-    date.tm_sec=0;
-    return date;
-}
-
-void affiche_date(struct tm date){//fonction qui affiche la date entré
-    printf("\nle %d à %d:%d\n",date.tm_mday,date.tm_hour,date.tm_min);
-}
-
-struct tm validation_date( ){//fonction afficher pour l'utilisateur, s'assure si le choix de l'utilisateur lui convient
-    int date_correct;
-    struct tm date;
-    while(date_correct!=1){//continue jusqu'à ce que la date convient à l'utilisateur
-        date=constructeur_date(date);//fonction pour créer la date
-        printf("\nCette date vous correspond elle?: ");
-        affiche_date(date);//affiche la date entrée par l'utilisateur
-        do{
-            printf("\n 1|OUI     2|NON\n"); 
-            scanf("%d",&date_correct); 
-        }while(date_correct<1 || date_correct>2);//recommence si la valeur entrée ne correspond pas aux choix
+void afficher_creneaux_disponibles(char* creneaux[], int nb_creneaux) {
+    printf("Creneaux horaires disponibles pour le 27 juin :\n");
+    for (int i = 0; i < nb_creneaux; i++) {
+        printf("%d. %s\n", i+1, creneaux[i]);
     }
-    return date;
-
 }
 
-int duree_activite(struct tm fin, struct tm instant_t){//Indique la fin des reservation, retourne 1 si le concert est fini/commencé, dans ce cas aucune réservation n'est possible puisque le concert est fini/commencé. Sinon retourne 0.
-//instant_t pourrait étre la valeur entrez par l'utilisateur pour indiquer l'heure de reservation 
-    if(instant_t.tm_mday>=fin.tm_mday){
-        if(instant_t.tm_hour>=fin.tm_hour){
-            if(instant_t.tm_min>=fin.tm_min){
-                return 1;
-            }
-        }
+int demander_creneaux(){
+ // Initialisation des créneaux horaires disponibles
+    char* creneaux[] = {"9:00-10:00", "10:00-11:00", "11:00-12:00", "13:00-14:00", "14:00-15:00", "15:00-16:00"};
+    int nb_creneaux = sizeof(creneaux) / sizeof(creneaux[0]);
+
+    // Afficher les créneaux horaires disponibles
+    afficher_creneaux_disponibles(creneaux, nb_creneaux);
+
+    // Demander à l'utilisateur de choisir un créneau
+    int choix;
+    printf("Choisissez un creneau horaire (entrez le numero correspondant) : ");
+    scanf("%d", &choix);
+
+    // Vérifier si le choix est valide
+    if (choix >= 1 && choix <= nb_creneaux) {
+        printf("Vous avez choisi le creneau horaire : %s\n", creneaux[choix - 1]);
+    } else {
+        printf("Choix invalide.\n");
     }
-    return 0;
-
+    return choix;
 }
 
-//source: http://sdz.tdct.org/sdz/ime-h-et-ses-fonctions.html
-//        https://koor.fr/C/ctime/ctime.wp
