@@ -4,13 +4,16 @@
 #include <time.h>
 #include <unistd.h>
 #include <errno.h>
+//Appele fichier.h du programme fnct_choix_menu.c
 #include "entete_choix_menu.h"
 
+//Couleur
 #define couleur(param) printf("\033[%sm", param)
 
-// Fonction pour afficher un message de bienvenue
+//Fonction pour afficher un message de bienvenue
 void afficherMessageBienvenue() {
-    couleur("1;35"); // Violet et gras
+    //Violet et gras
+    couleur("1;35"); 
     printf("**************************************************\n");
     printf("*                                                *\n");
     printf("*  _       __     __                             *\n");
@@ -22,11 +25,14 @@ void afficherMessageBienvenue() {
     printf("*      Bienvenue dans notre grand festival !     *\n");
     printf("*                                                *\n");
     printf("**************************************************\n");
-    couleur("0"); // Réinitialisation de la couleur
+    //Réinitialisation de la couleur
+    couleur("0"); 
 }
 
-int main(){
+int main( ){
+    //Appele fonction afficherMessageBienvenue
     afficherMessageBienvenue();
+    //Appele fonction choixmenu du programme fnct_choix_menu.c
     choixmenu();
  
     return 0;
