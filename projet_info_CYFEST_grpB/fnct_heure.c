@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+//Appele fichier.h du programme fnct_principal.c
+#include "entete_fnct_principal.h"
 
 //Fonction pour afficher les créneaux disponible
 void afficher_creneaux_disponibles(char* creneaux[], int nb_creneaux) {
@@ -20,9 +22,7 @@ int demander_creneaux(){
     afficher_creneaux_disponibles(creneaux, nb_creneaux);
 
     //Demander à l'utilisateur de choisir un créneau
-    int choix;
-    printf("Choisissez un creneau horaire (entrez le numero correspondant) : ");
-    scanf("%d", &choix);
+    int choix=better_scan_int("Choisissez un creneau horaire (entrez le numero correspondant): ");
 
     //Vérifie si le choix est valide
     if (choix >= 1 && choix <= nb_creneaux) {

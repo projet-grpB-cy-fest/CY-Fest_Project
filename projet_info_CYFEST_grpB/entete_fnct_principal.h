@@ -12,6 +12,7 @@
 #define TAILLE 50
 #define NB_LIGNES 8
 #define NB_COLONNES 8
+#define NB_SALLES 3
 
 //Structures
 // Structure pour représenter un siège

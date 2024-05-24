@@ -20,7 +20,7 @@ void afficherListeSalles(Salle salles[], int nb_salles) {
 //Fonction pour afficher le menu selon le mode choisi
 void choixmenu_mode(int mode){
     int choix_manager,choix_festivalier,choix_salles,i=0,j=0;
-    Salle *salles_concert=malloc(100*sizeof(Salle));
+    Salle salles_concert[NB_SALLES];
     //Mode manager
     if(mode==1){
 
@@ -29,9 +29,8 @@ void choixmenu_mode(int mode){
     
         //Boucle qui vérifie si la valeur entrée est correct
         do{
-            printf("\n\nEntrez votre choix: ");
-            scanf("%d",&choix_manager);
-        }while(choix_manager<1||choix_manager>4);
+            choix_manager=better_scan_int("\n\nEntrez votre choix: ");
+        }while(choix_manager<1||choix_manager>4); 
     
         //Boucle switch case pour chaque valeur entrez
         switch(choix_manager){
@@ -43,11 +42,16 @@ void choixmenu_mode(int mode){
             case 1:
                 //Créer une salle
                 printf("\nCreation salle: ");
+                
                 //Création de salle, appele de la fonction constructeur_Salle du programme fnct_principal.c
-                j++;
-                *(salles_concert+(j-1))=constructeur_Salle();
+                for (int i = 0; i < NB_SALLES; i++) {
+                    printf("Création de la salle %d\n", i + 1);
+                    salles_concert[i] = constructeur_Salle();
+                }
+                afficherListeSalles(salles_concert,NB_SALLES);
                 //Retour au menu manager
                 choixmenu_mode(1);
+                
             break;
 
             case 2:
@@ -55,10 +59,9 @@ void choixmenu_mode(int mode){
                 printf("\nConfiguration salle: ");
                 //Configuration d'une salle, appele de la fonction configuration_Salle du programme fnct_principal.c
                 do{
-                    afficherListeSalles(salles_concert,j);
-                    printf("\nQuelle salle voullez-vous modifier? : ");
-                    scanf("%d",choix_salles); 
-                }while(choix_salles<=0||choix_salles>j);
+                    afficherListeSalles(salles_concert,NB_SALLES);
+                    choix_salles=better_scan_int("Quelle salle voulez-vous modifier: "); 
+                }while(choix_salles<=0||choix_salles>NB_SALLES);
                 Salle salle_modifier=configuration_Salle(salles_concert[choix_salles-1]);  
                 //Retour au menu manager
                 choixmenu_mode(1);          
@@ -68,7 +71,7 @@ void choixmenu_mode(int mode){
                 //Etat de la salle
                 printf("\nEtat salle: ");
                 //Ratio d'une salle, appele de la fonction calculerRatio du programme fnct_principal.c
-                afficherRatioReservation(salles_concert,j); 
+                afficherRatioReservation(salles_concert,NB_SALLES); 
                 //Retour au menu manager
                 choixmenu_mode(1);
             break;
@@ -80,7 +83,6 @@ void choixmenu_mode(int mode){
                 choixmenu_mode(1);
             break;
         }
-        free(salles_concert);
     }
 
     //Mode festivalier:
@@ -90,8 +92,7 @@ void choixmenu_mode(int mode){
     
         //Boucle qui vérifie si la valeur entrez est correct
         do{
-            printf("\n\nEntrez votre choix: ");
-            scanf("%d",&choix_festivalier);
+            choix_festivalier=better_scan_int("\n\nEntrez votre choix: ");
         }while(choix_festivalier<1||choix_festivalier>2);
 
         //Réservation d'un siége, appele de la fonction gestionFestivalier du programme fnct_principal.c
@@ -121,7 +122,7 @@ void choixmenu_mode(int mode){
         }
 
         //Animation pour signaler le début du feu d'artifice
-        printf("\rBOUM !");
+        printf("\rBOUM !%s","\U0001f387");
         fflush(stdout);
         sleep(1);
         printf("\r         ");
@@ -129,7 +130,7 @@ void choixmenu_mode(int mode){
         sleep(1);
         printf("\rLe feu d'artifice a commencé !\n");
  
-        printf("\n   Aurevoir    \n");
+        printf("\n  %s Aurevoir %s   \n","\U0001f386","\U0001f386");
         //Fin du programme
         return ;
     }
@@ -145,8 +146,7 @@ void choixmenu(){
 
     //Boucle qui vérifie si la valeur entrez est correct
     do{
-        printf("\n\nEntrez votre choix: ");
-        scanf("%d",&mode);
+        mode=better_scan_int("\n\nEntrez votre choix: ");
     }while(mode<1||mode>3);
 
     //Accéder au mode choisi

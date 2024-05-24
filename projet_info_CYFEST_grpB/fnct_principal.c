@@ -11,6 +11,7 @@
 #define TAILLE 50
 #define NB_LIGNES 8
 #define NB_COLONNES 8
+#define NB_SALLES 3
 
 //Structure pour représenter un siège
 typedef struct {
@@ -30,7 +31,6 @@ typedef struct {
     int fosse;
     int creneaux;
 } Salle;
-
 //Fonction pour initialiser une salle
 void initialiserSalle(Salle *salle) {
     int numero = 1;
@@ -140,7 +140,6 @@ Salle constructeur_Salle() {
         while (getchar() != '\n')
             ; //Vider le tampon d'entrée
     }
-    printf("\nFin du concert:\n");
     salle.creneaux=demander_creneaux();
     sauvegarde_donnee_salle(salle.nom_salle, salle.groupe, salle.nb_siege, salle.prixSieges[0], salle.prixSieges[1], salle.prixSieges[2], salle.fosse, salle.creneaux);
     initialiserSalle(&salle);
@@ -158,7 +157,6 @@ Salle configuration_Salle(Salle salle) {
         while (getchar() != '\n')
             ; //Vider le tampon d'entrée
     }
-    printf("\nFin du concert:\n");
     salle.creneaux=demander_creneaux();
     sauvegarde_donnee_salle_modif(salle.nom_salle, salle.groupe, salle.nb_siege, salle.prixSieges[0], salle.prixSieges[1], salle.prixSieges[2], salle.fosse, salle.creneaux);
     initialiserSalle(&salle);
@@ -174,7 +172,7 @@ void gestionFestivalier(Salle salles[]) {
     int reservation_creneaux=demander_creneaux();
     //Affichage des salles disponibles, des groupes qui y jouent et des prix des billets
     printf("Salles disponibles :\n");
-    for(int i=0; i<100; i++){
+    for(int i=0; i<NB_SALLES; i++){
         if(reservation_creneaux==salles[i].creneaux){
             j++;
             if(salles[i].fosse==1){
@@ -194,9 +192,9 @@ void gestionFestivalier(Salle salles[]) {
     }
 
     //Demande à l'utilisateur de choisir une salle
-    int choix;
+    int choix=better_scan_int("Dans quelle salle voulez-vous aller ? (1-4) : ");
     printf("Dans quelle salle voulez-vous aller ? (1-4) : ");
-    while (scanf("%d", &choix) != 1 || choix < 1 || choix > 4) {
+    while (choix < 1 || choix > 4) {
         printf("Choix invalide. Veuillez choisir une salle valide (1-4) : ");
         while (getchar() != '\n')
             ; //Vider le tampon d'entrée
@@ -213,10 +211,9 @@ void gestionFestivalier(Salle salles[]) {
         afficherSalle(*salleChoisie, salleChoisie->fosse);
 
         //Réservation de sièges par le festivalier
-        int reserver;
+        int reserver=better_scan_int("Voulez-vous réserver un siège ? (1-OUI, 2-NON) : ");
         int numeroSiege;
-        printf("Voulez-vous réserver un siège ? (1-OUI, 2-NON) : ");
-        while (scanf("%d", &reserver) != 1 || (reserver != 2 && reserver != 1)) {
+        while (reserver>2 && reserver<1) {
             printf("Choix invalide. Veuillez saisir 1 pour OUI ou 2 pour NON : ");
             while (getchar() != '\n')
                 ; //Vider le tampon d'entrée
@@ -224,8 +221,7 @@ void gestionFestivalier(Salle salles[]) {
 
         while (reserver == 1) {
             //Demande à l'utilisateur de choisir un siège
-            
-            printf("Quel siège voulez-vous ? (01-64) : ");
+            numeroSiege==better_scan_int("Quel siège voulez-vous ? (01-64) : ");
             while (scanf("%d", &numeroSiege) != 1 || numeroSiege < 1 || numeroSiege > 64) {
                 printf("Siège invalide. Veuillez choisir un siège valide : ");
                 while (getchar() != '\n')
@@ -257,7 +253,7 @@ void gestionFestivalier(Salle salles[]) {
                 afficherSalle(*salleChoisie, salleChoisie->fosse);
 
                 //Demande si l'utilisateur veut réserver un autre siège
-                printf("Voulez-vous réserver un autre siège ? (1-OUI, 0-NON) : ");
+                reserver=better_scan_int("Voulez-vous réserver un autre siège ? (1-OUI, 0-NON) : ");
                 while (scanf("%d", &reserver) != 1 || (reserver != 0 && reserver != 1)) {
                     printf("Choix invalide. Veuillez saisir 1 pour OUI ou 0 pour NON : ");
                     while (getchar() != '\n')
