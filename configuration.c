@@ -7,6 +7,10 @@
 #define NB_LIGNES 8
 #define NB_COLONNES 8
 
+// Déclaration de la fonction choixmenu
+void choixmenu();
+
+
 typedef struct {
     char nom_salle[TAILLE];
     char groupe[TAILLE];
