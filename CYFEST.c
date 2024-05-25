@@ -123,7 +123,7 @@ void sauvegarde_donnee_reservation(char* nom_salle, char* nom_groupe, int n_sieg
 
 //Fonction pour afficher les créneaux disponible
 void afficher_creneaux_disponibles(char* creneaux[], int nb_creneaux) {
-    printf("Creneaux horaires disponibles pour le 27 juin :\n");
+    printf("\nCreneaux horaires disponibles pour le 27 juin:\n");
     for (int i = 0; i < nb_creneaux; i++) {
         printf("%d. %s\n", i+1, creneaux[i]);
     }
@@ -131,6 +131,7 @@ void afficher_creneaux_disponibles(char* creneaux[], int nb_creneaux) {
 
 //Fonction pour demander à l'utilisateur quel créneaux il souhaite
 int demander_creneaux(){
+    int choix;
     //Initialisation des créneaux horaires disponibles
     char* creneaux[] = {"9:00-10:00", "10:00-11:00", "11:00-12:00", "13:00-14:00", "14:00-15:00", "15:00-16:00"};
     int nb_creneaux = sizeof(creneaux) / sizeof(creneaux[0]);
@@ -138,17 +139,16 @@ int demander_creneaux(){
     //Afficher les créneaux horaires disponibles
     afficher_creneaux_disponibles(creneaux, nb_creneaux);
 
-    //Demander à l'utilisateur de choisir un créneau
-    int choix=better_scan_int("Choisissez un creneau horaire (entrez le numero correspondant): ");
-
-    //Vérifie si le choix est valide
-    if (choix >= 1 && choix <= nb_creneaux) {
-        printf("Vous avez choisi le creneau horaire : %s\n", creneaux[choix - 1]);
-    } else {
-        printf("Choix invalide.\n");
-    }
+    //Demande à l'utilisateur de choisir un créneau et vérifie si le choix est valide
+    do{
+        choix=better_scan_int("\nChoisissez un creneau horaire (1-6): ");
+    }while(choix<1 || choix>nb_creneaux);
+    printf("\nVous avez choisi le creneau horaire %s\n", creneaux[choix - 1]);
     return choix;
 }
+
+
+
 
 
 
@@ -236,7 +236,7 @@ double calculerRatio(int nb_sieges_reserves, int nb_sieges_total) {
 
 //Fonction pour afficher le ratio de réservation pour chaque salle (Mode Manager)
 void afficherRatioReservation(Salle salles[], int nb_salles) {
-    printf("Ratio de réservation pour chaque salle :\n");
+    printf("\nRatio de réservation pour chaque salle:\n");
     for (int i = 0; i < nb_salles; i++) {
         double ratio = calculerRatio(salles[i].nb_siege_reserves, salles[i].nb_siege);
         printf("%s : %.2f%%\n", salles[i].nom_salle, ratio);
@@ -246,21 +246,18 @@ void afficherRatioReservation(Salle salles[], int nb_salles) {
 //Fonction pour créer une salle (Mode Manager)
 Salle constructeur_Salle() {
     Salle salle;
-    better_scan("Saisir le nom de la salle : ", salle.nom_salle, TAILLE);
+    better_scan("\nSaisir le nom de la salle: ", salle.nom_salle, TAILLE);
     getchar();
-    better_scan("Saisir le nom du groupe de musique : ", salle.groupe, TAILLE);
+    better_scan("\nSaisir le nom du groupe de musique: ", salle.groupe, TAILLE);
     getchar();
     salle.nb_siege = NB_LIGNES * NB_COLONNES; //Fixé à 64 sièges pour toutes les salles
     salle.nb_siege_reserves = 0; //Initialisation du nombre de sièges réservés
-    salle.prixSieges[0] = better_scan_int("Saisir le prix des sièges avant : ");
-    salle.prixSieges[1] = better_scan_int("Saisir le prix des sièges milieu : ");
-    salle.prixSieges[2] = better_scan_int("Saisir le prix des sièges arrière : ");
-    salle.fosse=better_scan_int("\nFosse ? (1-OUI 2-NON) : ");
-    while (salle.fosse<1 || salle.fosse>2){
-        printf("Choix invalide. Veuillez saisir 1 ou 2 : ");
-        while (getchar() != '\n')
-            ; //Vider le tampon d'entrée
-    }
+    salle.prixSieges[0] = better_scan_int("\nSaisir le prix des sièges avant: ");
+    salle.prixSieges[1] = better_scan_int("\nSaisir le prix des sièges milieu: ");
+    salle.prixSieges[2] = better_scan_int("\nSaisir le prix des sièges arrière: ");
+    do{
+        salle.fosse=better_scan_int("\nFosse ? (1-OUI 2-NON): ");
+    }while (salle.fosse<1 || salle.fosse>2);
     salle.creneaux=demander_creneaux();
     sauvegarde_donnee_salle(salle.nom_salle, salle.groupe, salle.nb_siege, salle.prixSieges[0], salle.prixSieges[1], salle.prixSieges[2], salle.fosse, salle.creneaux);
     initialiserSalle(&salle);
@@ -269,15 +266,12 @@ Salle constructeur_Salle() {
 
 //Fonction pour modifier la configuration d'une salle (Mode Manager)
 Salle configuration_Salle(Salle salle) {
-    salle.prixSieges[0] = better_scan_int("Saisir le prix des sièges avant : ");
-    salle.prixSieges[1] = better_scan_int("Saisir le prix des sièges milieu : ");
-    salle.prixSieges[2] = better_scan_int("Saisir le prix des sièges arrière : ");
-    salle.fosse=better_scan_int("\nFosse ? (1-OUI 2-NON) : ");
-    while (salle.fosse<1 || salle.fosse>2){
-        printf("Choix invalide. Veuillez saisir 1 ou 2 : ");
-        while (getchar() != '\n')
-            ; //Vider le tampon d'entrée
-    }
+    salle.prixSieges[0] = better_scan_int("\nSaisir le prix des sièges avant: ");
+    salle.prixSieges[1] = better_scan_int("\nSaisir le prix des sièges milieu: ");
+    salle.prixSieges[2] = better_scan_int("\nSaisir le prix des sièges arrière: ");
+    do{
+        salle.fosse=better_scan_int("\nFosse ? (1-OUI 2-NON): ");
+    }while (salle.fosse<1 || salle.fosse>2);
     salle.creneaux=demander_creneaux();
     sauvegarde_donnee_salle_modif(salle.nom_salle, salle.groupe, salle.nb_siege, salle.prixSieges[0], salle.prixSieges[1], salle.prixSieges[2], salle.fosse, salle.creneaux);
     initialiserSalle(&salle);
@@ -289,21 +283,21 @@ void gestionFestivalier(Salle salles[]) {
     int numeroSiege;
     int j=0;
     //Demande l'heure de reservation 
-    printf("\nA quel heure voulez vous assistez aux concerts? :\n");
+    printf("\nA quel heure voulez vous assistez aux concerts?:\n");
     int reservation_creneaux=demander_creneaux();
     //Affichage des salles disponibles, des groupes qui y jouent et des prix des billets
-    printf("Salles disponibles :\n");
+    printf("\nSalles disponibles:\n");
     for(int i=0; i<NB_SALLES; i++){
         if(reservation_creneaux==salles[i].creneaux){
             j++;
             if(salles[i].fosse==1){
-                printf("%d. %s\n   Groupe : %s\n   Fosse : OUI\n   Prix du billet (avant/milieu/arrière) : %d/%d/%d euros\n\n",
+                printf("\n%d. %s   Groupe: %s   Fosse: OUI   Prix du billet (avant/milieu/arrière): %d/%d/%d euros\n",
                j, salles[i].nom_salle, salles[i].groupe,
                salles[i].prixSieges[0], salles[i].prixSieges[1],
                salles[i].prixSieges[2]);
             }
             else{
-                printf("%d. %s\n   Groupe : %s\n   Fosse : NON\n   Prix du billet (avant/milieu/arrière) : %d/%d/%d euros\n\n",
+                printf("\n%d. %s   Groupe: %s   Fosse: NON   Prix du billet (avant/milieu/arrière): %d/%d/%d euros\n",
                j, salles[i].nom_salle, salles[i].groupe,
                salles[i].prixSieges[0], salles[i].prixSieges[1],
                salles[i].prixSieges[2]);
@@ -312,90 +306,98 @@ void gestionFestivalier(Salle salles[]) {
         }
     }
 
+    if(j==0){
+        printf("\nAucune salle disponible, veuillez reéssayer plus tard.\n");
+        choixmenu_mode(2);
+    }
+
     //Demande à l'utilisateur de choisir une salle
-    int choix=better_scan_int("Dans quelle salle voulez-vous aller ? (1-4) : ");
-    printf("Dans quelle salle voulez-vous aller ? (1-4) : ");
+    int choix=better_scan_int("\nDans quelle salle voulez-vous aller ? (1-4): ");
     while (choix < 1 || choix > 4) {
-        printf("Choix invalide. Veuillez choisir une salle valide (1-4) : ");
+        printf("\nChoix invalide. Veuillez choisir une salle valide (1-4): ");
         while (getchar() != '\n')
             ; //Vider le tampon d'entrée
     }
     Salle *salleChoisie = &salles[choix - 1];
 
-    int prix_a_payer = 0;
+    int prix_a_payer = 0; 
+    //Affichage de la salle choisie
+    afficherSalle(*salleChoisie, salleChoisie->fosse);
+
+    //Réservation de sièges par le festivalier
+    int reserver=better_scan_int("\nVoulez-vous réserver un siège ? (1-OUI, 2-NON): ");
+        
+    while (reserver>2 && reserver<1) {
+        printf("\nChoix invalide. Veuillez saisir 1 pour OUI ou 2 pour NON: ");
+        while (getchar() != '\n'); //Vider le tampon d'entrée
+    }
+
+    if(reserver==2){
+        choixmenu_mode(2);
+    }
+
+    else if(reserver == 1) {
+        //Demande à l'utilisateur de choisir un siège
+       
+        do{
+            numeroSiege==better_scan_int("\nQuel siège voulez-vous ? (01-64): ");
+        } while (numeroSiege < 1 || numeroSiege > 64);
+
+        //Conversion du numéro de siège en indices de ligne et de colonne
+        int ligne = (numeroSiege - 1) / 8;
+        int colonne = (numeroSiege - 1) % 8;
+
+        //Vérification de la disponibilité du siège
+        if (salleChoisie->sieges[ligne][colonne].statut == 'X') {
+            printf("\nCe siège est déjà réservé.\n");
+        } 
+        else {
+            //Réservation du siège
+            salleChoisie->sieges[ligne][colonne].statut = 'X';
+            salleChoisie->nb_siege_reserves++;
+
+            //Calcul du prix en fonction de la catégorie
+            if (salleChoisie->sieges[ligne][colonne].categorie == 'A') {
+                prix_a_payer += salleChoisie->prixSieges[0];
+            } 
+            else if (salleChoisie->sieges[ligne][colonne].categorie == 'B') {
+                prix_a_payer += salleChoisie->prixSieges[1];
+            } 
+            else {
+                prix_a_payer += salleChoisie->prixSieges[2];
+            }
+
+            //Affichage du plan de la salle après réservation du siège
+            afficherSalle(*salleChoisie, salleChoisie->fosse);
+
+            //Demande si l'utilisateur veut réserver un autre siège
+            
+            do{
+                reserver=better_scan_int("\nVoulez-vous réserver un autre siège ? (1-OUI, 0-NON): ");
+            }while (reserver != 0 && reserver != 1);
+        }
+    }
+
+    //Affichage du prix total à payer
     if (salleChoisie->fosse == 0) {
         //L'utilisateur choisit la fosse
         prix_a_payer = 2 * salleChoisie->prixSieges[0];
-        printf("Vous avez choisi la fosse. Le prix à payer est de %d euros.\n", prix_a_payer);
-    } else {
-        //Affichage de la salle choisie
-        afficherSalle(*salleChoisie, salleChoisie->fosse);
-
-        //Réservation de sièges par le festivalier
-        int reserver=better_scan_int("Voulez-vous réserver un siège ? (1-OUI, 2-NON) : ");
-        int numeroSiege;
-        while (reserver>2 && reserver<1) {
-            printf("Choix invalide. Veuillez saisir 1 pour OUI ou 2 pour NON : ");
-            while (getchar() != '\n')
-                ; //Vider le tampon d'entrée
-        }
-
-        while (reserver == 1) {
-            //Demande à l'utilisateur de choisir un siège
-            numeroSiege==better_scan_int("Quel siège voulez-vous ? (01-64) : ");
-            while (scanf("%d", &numeroSiege) != 1 || numeroSiege < 1 || numeroSiege > 64) {
-                printf("Siège invalide. Veuillez choisir un siège valide : ");
-                while (getchar() != '\n')
-                    ; //Vider le tampon d'entrée
-            }
-
-            //Conversion du numéro de siège en indices de ligne et de colonne
-            int ligne = (numeroSiege - 1) / 8;
-            int colonne = (numeroSiege - 1) % 8;
-
-            //Vérification de la disponibilité du siège
-            if (salleChoisie->sieges[ligne][colonne].statut == 'X') {
-                printf("Ce siège est déjà réservé.\n");
-            } else {
-                //Réservation du siège
-                salleChoisie->sieges[ligne][colonne].statut = 'X';
-                salleChoisie->nb_siege_reserves++;
-
-                //Calcul du prix en fonction de la catégorie
-                if (salleChoisie->sieges[ligne][colonne].categorie == 'A') {
-                    prix_a_payer += salleChoisie->prixSieges[0];
-                } else if (salleChoisie->sieges[ligne][colonne].categorie == 'B') {
-                    prix_a_payer += salleChoisie->prixSieges[1];
-                } else {
-                    prix_a_payer += salleChoisie->prixSieges[2];
-                }
-
-                //Affichage du plan de la salle après réservation du siège
-                afficherSalle(*salleChoisie, salleChoisie->fosse);
-
-                //Demande si l'utilisateur veut réserver un autre siège
-                reserver=better_scan_int("Voulez-vous réserver un autre siège ? (1-OUI, 0-NON) : ");
-                while (scanf("%d", &reserver) != 1 || (reserver != 0 && reserver != 1)) {
-                    printf("Choix invalide. Veuillez saisir 1 pour OUI ou 0 pour NON : ");
-                    while (getchar() != '\n')
-                        ; // Vider le tampon d'entrée
-                }
-            }
-        }
-
-        //Affichage du prix total à payer
-        printf("Le prix total à payer est de %d euros.\n", prix_a_payer);
+        printf("\nVous avez choisi la fosse. Le prix à payer est de %d euros.\n", prix_a_payer);
     }
+    else{
+        printf("\nLe prix total à payer est de %d euros.\n", prix_a_payer);
+    }
+
     sauvegarde_donnee_reservation(salleChoisie->nom_salle, salleChoisie->groupe, numeroSiege, prix_a_payer, salleChoisie->fosse, salleChoisie->creneaux);
     
     //Remerciement 
-    printf("Merci pour votre réservation !\n");
+    printf("\nMerci pour votre réservation !\n");
 }
 
 
 //Fonction pour afficher la liste des salles créées pour la configuration
 void afficherListeSalles(Salle salles[], int nb_salles) {
-    printf("Liste des salles créées :\n");
+    printf("\nListe des salles créées:\n");
     for (int i = 0; i < nb_salles; i++) {
         printf("%d. %s\n", i + 1, salles[i].nom_salle);
     }
@@ -409,27 +411,28 @@ void choixmenu_mode(int mode){
     if(mode==1){
 
         //Menu du mode manager
-        printf("\n1-Creer une salle \n2-Modifier la configuration d'une salle \n3-Etat de la salle \n4-Retour au menu principal ");
+        printf("\nMode MANAGER: \n1-Creer une salle \n2-Modifier la configuration d'une salle \n3-Etat de la salle \n4-Retour au menu principal \n");
     
         //Boucle qui vérifie si la valeur entrée est correct
         do{
-            choix_manager=better_scan_int("\n\nEntrez votre choix: ");
+            choix_manager=better_scan_int("\n\nEntrez votre choix (1-4): ");
         }while(choix_manager<1||choix_manager>4); 
     
         //Boucle switch case pour chaque valeur entrez
         switch(choix_manager){
             case 4:
                 //Retour au menu principale
+                printf("\nRetour au menu principale\n");
                 choixmenu();
             break;
 
             case 1:
                 //Créer une salle
-                printf("\nCreation salle: ");
+                printf("\nCreation salle: \n");
                 
                 //Création de salle, appele de la fonction constructeur_Salle du programme fnct_principal.c
                 for (int i = 0; i < NB_SALLES; i++) {
-                    printf("Création de la salle %d\n", i + 1);
+                    printf("\nCréation de la salle %d\n", i + 1);
                     salles_concert[i] = constructeur_Salle();
                 }
                 afficherListeSalles(salles_concert,NB_SALLES);
@@ -440,11 +443,11 @@ void choixmenu_mode(int mode){
 
             case 2:
                 //Configurer salle
-                printf("\nConfiguration salle: ");
+                printf("\nConfiguration salle: \n");
                 //Configuration d'une salle, appele de la fonction configuration_Salle du programme fnct_principal.c
                 do{
                     afficherListeSalles(salles_concert,NB_SALLES);
-                    choix_salles=better_scan_int("Quelle salle voulez-vous modifier: "); 
+                    choix_salles=better_scan_int("\nQuelle salle voulez-vous modifier (1-3): "); 
                 }while(choix_salles<=0||choix_salles>NB_SALLES);
                 Salle salle_modifier=configuration_Salle(salles_concert[choix_salles-1]);  
                 //Retour au menu manager
@@ -453,7 +456,7 @@ void choixmenu_mode(int mode){
 
             case 3:
                 //Etat de la salle
-                printf("\nEtat salle: ");
+                printf("\nEtat salle: \n");
                 //Ratio d'une salle, appele de la fonction calculerRatio du programme fnct_principal.c
                 afficherRatioReservation(salles_concert,NB_SALLES); 
                 //Retour au menu manager
@@ -462,7 +465,7 @@ void choixmenu_mode(int mode){
 
             default:
                 //Message d'erreur
-                printf("\nerreur saisie");
+                printf("\nerreur saisie\n");
                 //Retour au menu manager
                 choixmenu_mode(1);
             break;
@@ -472,28 +475,30 @@ void choixmenu_mode(int mode){
     //Mode festivalier:
     if(mode==2){
        //Menu du mode festivalier
-        printf("\n1-Réservation \n2-Retour au menu principal ");
+        printf("\nMenu FESTIVALIER: \n1-Réservation \n2-Retour au menu principal \n");
     
         //Boucle qui vérifie si la valeur entrez est correct
         do{
-            choix_festivalier=better_scan_int("\n\nEntrez votre choix: ");
+            choix_festivalier=better_scan_int("\n\nEntrez votre choix (1-2): ");
         }while(choix_festivalier<1||choix_festivalier>2);
 
         //Réservation d'un siége, appele de la fonction gestionFestivalier du programme fnct_principal.c
         if(choix_festivalier==1){
+            printf("\nRéservation: \n");
             gestionFestivalier(salles_concert);
             //Retour au menu manager
             choixmenu_mode(2);
         }
         else if(choix_festivalier==2){
-            //Retour au menu principal
+            //Retour au menu principale
+            printf("\nRetour au menu principale\n");
             choixmenu();
         }
     }
 
     //Quitter le programme:
     if(mode==3){
-        printf("Le feu d'artifice va commencer !\n");
+        printf("\nLe feu d'artifice va commencer !\n");
     
         //Compte à rebours de 10 à 0
         for (int i = 10; i >= 0; i--) {
@@ -506,7 +511,7 @@ void choixmenu_mode(int mode){
         }
 
         //Animation pour signaler le début du feu d'artifice
-        printf("\rBOUM !");
+        printf("\rBOUM !%s","\U0001f387");
         fflush(stdout);
         sleep(1);
         printf("\r         ");
@@ -514,7 +519,7 @@ void choixmenu_mode(int mode){
         sleep(1);
         printf("\rLe feu d'artifice a commencé !\n");
  
-        printf("\n   Aurevoir    \n");
+        printf("\n  %s Aurevoir %s   \n","\U0001f386","\U0001f386");
         //Fin du programme
         return ;
     }
@@ -526,11 +531,11 @@ void choixmenu(){
     int mode;
  
     //Entrez le mode:
-    printf("\n1-MANAGER \n2-FESTIVALIER \n3-QUITTER");
+    printf("\nMODE: \n1-MANAGER \n2-FESTIVALIER \n3-QUITTER\n");
 
     //Boucle qui vérifie si la valeur entrez est correct
     do{
-        mode=better_scan_int("\n\nEntrez votre choix: ");
+        mode=better_scan_int("\n\nEntrez votre choix (1-3): ");
     }while(mode<1||mode>3);
 
     //Accéder au mode choisi
