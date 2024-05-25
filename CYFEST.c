@@ -517,7 +517,6 @@ void choixmenu_mode(int mode){
         printf("\r         ");
         fflush(stdout);
         sleep(1);
-        printf("\rLe feu d'artifice a commencé !\n");
  
         printf("\n  %s Aurevoir %s   \n","\U0001f386","\U0001f386");
         //Fin du programme
