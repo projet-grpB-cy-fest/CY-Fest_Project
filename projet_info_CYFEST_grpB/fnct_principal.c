@@ -11,7 +11,7 @@
 #define TAILLE 50
 #define NB_LIGNES 8
 #define NB_COLONNES 8
-#define NB_SALLES 3
+#define NB_SALLES 300
 
 //Structure pour représenter un siège
 typedef struct {
@@ -124,16 +124,6 @@ double calculerRatio(int nb_sieges_reserves, int nb_sieges_total) {
     return ((double)nb_sieges_reserves / nb_sieges_total) * 100;
 }
 
-//Fonction pour afficher le ratio de réservation pour chaque salle (Mode Manager)
-void afficherRatioReservation(Salle salles[], int nb_salles) {
-    printf("\nRatio de réservation pour chaque salle:\n");
-
-    for (int i = 0; i < nb_salles; i++) {
-        double ratio = calculerRatio(salles[i].nb_siege_reserves, salles[i].nb_siege);
-        printf("%s : %.2f%%\n", salles[i].nom_salle, ratio);
-    }
-}
-
 //Fonction pour créer une salle (Mode Manager)
 Salle constructeur_Salle() {
     Salle salle;
@@ -207,16 +197,16 @@ void gestionFestivalier(Salle salles[]) {
             
         }
     }
-    //Si aucune salle est disponible, retour au menu festivalier
+    //Retour au menu festivalier si il y a aucune salle disponible
     if(j==0){
         printf("\nAucune salle disponible, veuillez reéssayer plus tard.\n");
         return ;
     }
 
     //Demande à l'utilisateur de choisir une salle
-    int choix=better_scan_int("\nDans quelle salle voulez-vous aller ? (1-3): ");
-    while (choix < 1 || choix > 3) {
-        printf("\nChoix invalide. Veuillez choisir une salle valide (1-3): ");
+    int choix=better_scan_int("\nDans quelle salle voulez-vous aller ? : ");
+    while (choix < 1 || choix > 4) {
+        printf("\nChoix invalide. Veuillez choisir une salle valide: ");
         while (getchar() != '\n')
             ; //Vider le tampon d'entrée
     }
@@ -233,17 +223,17 @@ void gestionFestivalier(Salle salles[]) {
         printf("\nChoix invalide. Veuillez saisir 1 pour OUI ou 2 pour NON: ");
         while (getchar() != '\n'); //Vider le tampon d'entrée
     }
-
-    //Retour au menu festivalier si l'utilisateur ne veut pas réserver
+    //Retour au menu festivalier
     if(reserver==2){
         return ;
     }
 
-    else if(reserver == 1) {
+    do{
         //Demande à l'utilisateur de choisir un siège
         do{
-            numeroSiege==better_scan_int("\nQuel siège voulez-vous ? (01-64): ");
-        } while (numeroSiege < 1 || numeroSiege > 64);
+            printf("\nQuel siège voulez-vous ? (01-64): ");
+            scanf("%d",&numeroSiege);
+        } while (numeroSiege<1||numeroSiege>64);
 
         //Conversion du numéro de siège en indices de ligne et de colonne
         int ligne = (numeroSiege - 1) / 8;
@@ -260,7 +250,13 @@ void gestionFestivalier(Salle salles[]) {
 
             //Calcul du prix en fonction de la catégorie
             if (salleChoisie->sieges[ligne][colonne].categorie == 'A') {
-                prix_a_payer += salleChoisie->prixSieges[0];
+                //Si la salle choisi a une fosse, le prix des siéges avant double
+                if(salleChoisie->fosse==1){
+                    prix_a_payer += 2*salleChoisie->prixSieges[0];
+                }
+                else{
+                    prix_a_payer += salleChoisie->prixSieges[0];
+                }
             } 
             else if (salleChoisie->sieges[ligne][colonne].categorie == 'B') {
                 prix_a_payer += salleChoisie->prixSieges[1];
@@ -273,23 +269,15 @@ void gestionFestivalier(Salle salles[]) {
             afficherSalle(*salleChoisie, salleChoisie->fosse);
 
             //Demande si l'utilisateur veut réserver un autre siège
-            
             do{
-                reserver=better_scan_int("\nVoulez-vous réserver un autre siège ? (1-OUI, 0-NON): ");
-            }while (reserver != 0 && reserver != 1);
+                reserver=better_scan_int("\nVoulez-vous réserver un autre siège ? (1-OUI, 2-NON): ");
+            }while (reserver != 2 && reserver != 1);
         }
-    }
+    }while(reserver!=2);
 
     //Affichage du prix total à payer
-    if (salleChoisie->fosse == 0) {
-        //L'utilisateur choisit la fosse
-        prix_a_payer = 2 * salleChoisie->prixSieges[0];
-        printf("\nVous avez choisi la fosse. Le prix à payer est de %d euros.\n", prix_a_payer);
-    }
-    else{
-        printf("\nLe prix total à payer est de %d euros.\n", prix_a_payer);
-    }
-
+    printf("\nLe prix total à payer est de %d euros.\n", prix_a_payer);
+    
     sauvegarde_donnee_reservation(salleChoisie->nom_salle, salleChoisie->groupe, numeroSiege, prix_a_payer, salleChoisie->fosse, salleChoisie->creneaux);
     
     //Remerciement 

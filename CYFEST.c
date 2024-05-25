@@ -31,7 +31,7 @@ typedef struct {
 } Salle;
 
 void choixmenu();
-int choixmenu_mode(int mode);
+void choixmenu_mode(int mode);
 void afficherListeSalles(Salle salles[], int nb_salles);
 int better_scan_int(char* message);
 Salle salles_concert[NB_SALLES];
@@ -235,7 +235,6 @@ double calculerRatio(int nb_sieges_reserves, int nb_sieges_total) {
     return ((double)nb_sieges_reserves / nb_sieges_total) * 100;
 }
 
-//Fonction pour afficher le ratio de réservation pour chaque salle (Mode Manager)
 
 
 //Fonction pour créer une salle (Mode Manager)
@@ -270,12 +269,6 @@ Salle configuration_Salle(Salle salle) {
     salle.creneaux=demander_creneaux();
     sauvegarde_donnee_salle_modif(salle.nom_salle, salle.groupe, salle.nb_siege, salle.prixSieges[0], salle.prixSieges[1], salle.prixSieges[2], salle.fosse, salle.creneaux);
     initialiserSalle(&salle);
-    for (int i = 0; i < NB_SALLES; i++) {
-        if (strcmp(salles_concert[i].nom_salle, "") == 0) {
-            salles_concert[i] = salle;
-            break;
-        }
-    }
     return salle;
 }
 
@@ -306,7 +299,7 @@ void gestionFestivalier(Salle salles[]) {
             
         }
     }
-
+    //Retour au menu festivalier si il y a aucune salle disponible
     if(j==0){
         printf("\nAucune salle disponible, veuillez reéssayer plus tard.\n");
         choixmenu_mode(2);
@@ -332,10 +325,11 @@ void gestionFestivalier(Salle salles[]) {
         printf("\nChoix invalide. Veuillez saisir 1 pour OUI ou 2 pour NON: ");
         while (getchar() != '\n'); //Vider le tampon d'entrée
     }
-    
+    //Retour au menu festivalier
     if(reserver==2){
         choixmenu_mode(2);
     }
+
     do{
         //Demande à l'utilisateur de choisir un siège
         do{
@@ -358,6 +352,7 @@ void gestionFestivalier(Salle salles[]) {
 
             //Calcul du prix en fonction de la catégorie
             if (salleChoisie->sieges[ligne][colonne].categorie == 'A') {
+                //Si la salle choisi a une fosse, le prix des siéges avant double
                 if(salleChoisie->fosse==1){
                     prix_a_payer += 2*salleChoisie->prixSieges[0];
                 }
@@ -376,7 +371,6 @@ void gestionFestivalier(Salle salles[]) {
             afficherSalle(*salleChoisie, salleChoisie->fosse);
 
             //Demande si l'utilisateur veut réserver un autre siège
-            
             do{
                 reserver=better_scan_int("\nVoulez-vous réserver un autre siège ? (1-OUI, 2-NON): ");
             }while (reserver != 2 && reserver != 1);
@@ -409,9 +403,8 @@ void afficherListeSalles(Salle salles[], int nb_salles) {
 }
 
 //Fonction pour afficher le menu selon le mode choisi
-int choixmenu_mode(int mode){
-    int choix_manager,choix_festivalier,choix_salles,i=0,j=0;
-    
+void choixmenu_mode(int mode){
+    int choix_manager,choix_festivalier,choix_salles,i=0;
     //Mode manager
     if(mode==1){
 
@@ -432,7 +425,9 @@ int choixmenu_mode(int mode){
             break;
 
             case 1:
+                //Créer de salle
                 printf("\nCréation de salle: \n");
+                //Création d'une salle, appele de la fonction constructeur_Salle du programme fnct_principal.c
                 for (int i = 0; i < NB_SALLES; i++) {
                     if (strcmp(salles_concert[i].nom_salle, "") == 0) {
                         printf("\nCréation de la salle %d\n", i +1);
@@ -440,7 +435,9 @@ int choixmenu_mode(int mode){
                         break;
                     }
                 }
+                
                 afficherListeSalles(salles_concert, NB_SALLES);
+                //Retour au menu manager 
                 choixmenu_mode(1);
                 
             break;
@@ -460,8 +457,9 @@ int choixmenu_mode(int mode){
                         //Retour au menu manager 
                         choixmenu_mode(1); 
                     }
+                    //Retour au menu manager
                     else{
-                        printf("\nAucune salle encore créée, veuillez en créer une\n");
+                        printf("\nAucune salle encore créée, veuillez en créer une\n"); 
                         choixmenu_mode(1);
                     }
                 }
@@ -470,16 +468,20 @@ int choixmenu_mode(int mode){
             break;
 
             case 3:
+                //Ratio salle
                 printf("\nÉtat salle: \n");
+                //Ratio des salles créées (nombre de siége réservé sur nombre de siége qui est de 64), appele de la fonction calculerRatio du programme fnct_principal.c
                 for (int i = 0; i < NB_SALLES; i++) {
                     if (strcmp(salles_concert[i].nom_salle, "") != 0){
                         printf("%d) %s: %.2f%%\n", i+1, salles_concert[i].nom_salle, calculerRatio(salles_concert[i].nb_siege_reserves, salles_concert[i].nb_siege));
                     }
                     else{
                         printf("\nAucune salle encore créée, veuillez en créer une\n");
+                        //Retour au menu manager
                         choixmenu_mode(1);
                     }
                 }
+                //Retour au menu manager
                 choixmenu_mode(1);
             break;
 
@@ -509,8 +511,9 @@ int choixmenu_mode(int mode){
             //Retour au menu manager
             choixmenu_mode(2);
         }
+        //Retour au menu principale
         else if(choix_festivalier==2){
-            //Retour au menu principale
+            
             printf("\nRetour au menu principale\n");
             choixmenu();
         }
@@ -540,9 +543,10 @@ int choixmenu_mode(int mode){
  
         printf("\n  %s Aurevoir %s   \n","\U0001f386","\U0001f386");
         //Fin du programme
-        return 0;
+        exit(1);
+        
     }
-
+    exit(1);
 }
 
 //Fonction pour afficher le menu principale
@@ -558,8 +562,7 @@ void choixmenu(){
     }while(mode<1||mode>3);
 
     //Accéder au mode choisi
-    mode=choixmenu_mode(mode);
-
+    choixmenu_mode(mode);
 }
 
 

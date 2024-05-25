@@ -8,20 +8,30 @@
 void choixmenu();
 void choixmenu_mode(int mode);
 void afficherListeSalles(Salle salles[], int nb_salles);
+void initialiserlisteSalles();
+//Appele structure liste de salles
+Salle salles_concert[NB_SALLES];
 
-//Fonction pour afficher la liste des salles créées pour la configuration
+//Fonction pour initialiser la liste des salles créée
+void initialiserlisteSalles() {
+    for (int i = 0; i < NB_SALLES; i++) {
+        strcpy(salles_concert[i].nom_salle, ""); // Initialiser les noms de salle à une chaîne vide
+    }
+}
+
+//Fonction pour afficher la liste des salles créées
 void afficherListeSalles(Salle salles[], int nb_salles) {
     printf("\nListe des salles créées:\n");
-
     for (int i = 0; i < nb_salles; i++) {
-        printf("%d. %s\n", i + 1, salles[i].nom_salle);
+        if (strcmp(salles[i].nom_salle, "") != 0) {
+            printf("%d. %s\n", i + 1, salles[i].nom_salle);
+        }
     }
 }
 
 //Fonction pour afficher le menu selon le mode choisi
 void choixmenu_mode(int mode){
-    int choix_manager,choix_festivalier,choix_salles,i=0,j=0;
-    Salle salles_concert[NB_SALLES];
+    int choix_manager,choix_festivalier,choix_salles,i=0;
     //Mode manager
     if(mode==1){
 
@@ -42,16 +52,19 @@ void choixmenu_mode(int mode){
             break;
 
             case 1:
-                //Créer une salle
-                printf("\nCreation salle: \n");
-                
-                //Création de salle, appele de la fonction constructeur_Salle du programme fnct_principal.c
+                //Créer de salle
+                printf("\nCréation de salle: \n");
+                //Création d'une salle, appele de la fonction constructeur_Salle du programme fnct_principal.c
                 for (int i = 0; i < NB_SALLES; i++) {
-                    printf("\nCréation de la salle %d\n", i + 1);
-                    salles_concert[i] = constructeur_Salle();
+                    if (strcmp(salles_concert[i].nom_salle, "") == 0) {
+                        printf("\nCréation de la salle %d\n", i +1);
+                        salles_concert[i] = constructeur_Salle();
+                        break;
+                    }
                 }
-                afficherListeSalles(salles_concert,NB_SALLES);
-                //Retour au menu manager
+                
+                afficherListeSalles(salles_concert, NB_SALLES);
+                //Retour au menu manager 
                 choixmenu_mode(1);
                 
             break;
@@ -60,20 +73,41 @@ void choixmenu_mode(int mode){
                 //Configurer salle
                 printf("\nConfiguration salle: \n");
                 //Configuration d'une salle, appele de la fonction configuration_Salle du programme fnct_principal.c
-                do{
-                    afficherListeSalles(salles_concert,NB_SALLES);
-                    choix_salles=better_scan_int("\nQuelle salle voulez-vous modifier (1-3): "); 
-                }while(choix_salles<=0||choix_salles>NB_SALLES);
-                Salle salle_modifier=configuration_Salle(salles_concert[choix_salles-1]);  
-                //Retour au menu manager
-                choixmenu_mode(1);          
+                afficherListeSalles(salles_concert,NB_SALLES);
+                for (int i = 0; i < NB_SALLES; i++) {
+                    if (strcmp(salles_concert[i].nom_salle, "") != 0){
+                        do{
+                            choix_salles=better_scan_int("\nQuelle salle voulez-vous modifier: "); 
+                        }while(choix_salles<=0||choix_salles>NB_SALLES);
+                        Salle salle_modifier=configuration_Salle(salles_concert[choix_salles-1]);
+                        salles_concert[choix_salles-1]=salle_modifier;
+                        //Retour au menu manager 
+                        choixmenu_mode(1); 
+                    }
+                    //Retour au menu manager
+                    else{
+                        printf("\nAucune salle encore créée, veuillez en créer une\n"); 
+                        choixmenu_mode(1);
+                    }
+                }
+                
+                         
             break;
 
             case 3:
-                //Etat de la salle
-                printf("\nEtat salle: \n");
-                //Ratio d'une salle, appele de la fonction calculerRatio du programme fnct_principal.c
-                afficherRatioReservation(salles_concert,NB_SALLES); 
+                //Ratio salle
+                printf("\nÉtat salle: \n");
+                //Ratio des salles créées (nombre de siége réservé sur nombre de siége qui est de 64), appele de la fonction calculerRatio du programme fnct_principal.c
+                for (int i = 0; i < NB_SALLES; i++) {
+                    if (strcmp(salles_concert[i].nom_salle, "") != 0){
+                        printf("%d) %s: %.2f%%\n", i+1, salles_concert[i].nom_salle, calculerRatio(salles_concert[i].nb_siege_reserves, salles_concert[i].nb_siege));
+                    }
+                    else{
+                        printf("\nAucune salle encore créée, veuillez en créer une\n");
+                        //Retour au menu manager
+                        choixmenu_mode(1);
+                    }
+                }
                 //Retour au menu manager
                 choixmenu_mode(1);
             break;
@@ -104,9 +138,9 @@ void choixmenu_mode(int mode){
             //Retour au menu manager
             choixmenu_mode(2);
         }
-        
+        //Retour au menu principale
         else if(choix_festivalier==2){
-            //Retour au menu principale
+            
             printf("\nRetour au menu principale\n");
             choixmenu();
         }
@@ -133,13 +167,13 @@ void choixmenu_mode(int mode){
         printf("\r         ");
         fflush(stdout);
         sleep(1);
-        printf("\rLe feu d'artifice a commencé !\n");
  
         printf("\n  %s Aurevoir %s   \n","\U0001f386","\U0001f386");
         //Fin du programme
-        return ;
+        exit(1);
+        
     }
-
+    exit(1);
 }
 
 //Fonction pour afficher le menu principale
@@ -156,5 +190,4 @@ void choixmenu(){
 
     //Accéder au mode choisi
     choixmenu_mode(mode);
-
 }

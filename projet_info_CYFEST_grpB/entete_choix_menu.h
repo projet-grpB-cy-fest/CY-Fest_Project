@@ -8,3 +8,4 @@
 void choixmenu();//Fonction pour afficher le menu principale
 void choixmenu_mode(int mode);//Fonction pour afficher le menu selon le mode choisi
 void afficherListeSalles(Salle salles[], int nb_salles);//Fonction pour afficher la liste des salles créées pour la configuration
+void initialiserlisteSalles();//Fonction pour initialiser la liste des salles créée
