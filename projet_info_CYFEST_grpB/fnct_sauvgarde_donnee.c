@@ -64,7 +64,7 @@ void sauvegarde_donnee_reservation(char* nom_salle, char* nom_groupe, int n_sieg
 	fprintf(f,"%s ",nom_salle);
 	fprintf(f,"%s ",nom_groupe);
 	fprintf(f,"%d ",n_siege);
-	fprintf(f,"%f ",prix);
+	fprintf(f,"%f ",prix); 
 	fprintf(f,"%d \n",creneaux);
 	
 	fclose(f); 

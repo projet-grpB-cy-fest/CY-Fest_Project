@@ -22,7 +22,7 @@ void afficherMessageBienvenue() {
     printf("* | |/ |/ /  __/ / /__/ /_/ / / / / /  __/     *\n");
     printf("* |__/|__/\\___/_/\\___/\\____/_/ /_/ /_/\\___/      *\n");
     printf("*                                                *\n");
-    printf("*%s%s%sBienvenue dans notre grand festival !%s%s%s*\n","\U0001f91f","\U0001f60e","\U0001f91f","\U0001f91f","\U0001f60e","\U0001f91f";)
+    printf("*%s%s%sBienvenue dans notre grand festival !%s%s%s*\n","\U0001f91f","\U0001f973","\U0001f91f","\U0001f91f","\U0001f973","\U0001f91f");
     printf("*                                                *\n");
     printf("**************************************************\n");
     //Réinitialisation de la couleur
